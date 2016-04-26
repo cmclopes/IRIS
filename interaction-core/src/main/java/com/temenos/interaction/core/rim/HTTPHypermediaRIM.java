@@ -44,8 +44,6 @@ import javax.ws.rs.core.Response.StatusType;
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriInfo;
 
-import com.temenos.interaction.core.hypermedia.LinkGenerator;
-import com.temenos.interaction.core.hypermedia.LinkGeneratorImpl;
 import org.apache.wink.common.model.multipart.InMultiPart;
 import org.apache.wink.common.model.multipart.InPart;
 import org.slf4j.Logger;
@@ -68,6 +66,8 @@ import com.temenos.interaction.core.hypermedia.Action;
 import com.temenos.interaction.core.hypermedia.DynamicResourceState;
 import com.temenos.interaction.core.hypermedia.Event;
 import com.temenos.interaction.core.hypermedia.Link;
+import com.temenos.interaction.core.hypermedia.LinkGenerator;
+import com.temenos.interaction.core.hypermedia.LinkGeneratorImpl;
 import com.temenos.interaction.core.hypermedia.LinkHeader;
 import com.temenos.interaction.core.hypermedia.ParameterAndValue;
 import com.temenos.interaction.core.hypermedia.ResourceLocatorProvider;
@@ -366,7 +366,7 @@ public class HTTPHypermediaRIM implements HTTPResourceInteractionModel {
         }
 
         // determine status
-        if (ctx.getResource() != null && status.getFamily() == Status.Family.SUCCESSFUL) {
+        if (ctx.getResource() != null) {
             /*
              * How should we handle the representation of this resource
              */
@@ -395,7 +395,6 @@ public class HTTPHypermediaRIM implements HTTPResourceInteractionModel {
             }
 
         }
-
         // build response
         return buildResponse(headers, ctx.getPathParameters(), status, ctx.getResource(), null, ctx, event.isSafe());
     }

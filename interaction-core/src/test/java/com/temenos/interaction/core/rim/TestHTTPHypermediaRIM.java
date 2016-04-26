@@ -27,12 +27,16 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.isNull;
+import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +54,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -59,6 +65,7 @@ import com.temenos.interaction.core.command.InteractionCommand;
 import com.temenos.interaction.core.command.InteractionCommand.Result;
 import com.temenos.interaction.core.command.InteractionContext;
 import com.temenos.interaction.core.command.InteractionException;
+import com.temenos.interaction.core.entity.Entity;
 import com.temenos.interaction.core.entity.EntityMetadata;
 import com.temenos.interaction.core.entity.Metadata;
 import com.temenos.interaction.core.hypermedia.Action;
@@ -70,11 +77,18 @@ import com.temenos.interaction.core.resource.EntityResource;
 import com.temenos.interaction.core.web.RequestContext;
 
 public class TestHTTPHypermediaRIM {
-
+    
+    @Mock
+    private MultivaluedMap<String, String> pathParams, queryParams;
+    
+    @Mock
+    private EntityResource<Entity> entityResource;
+    
     @Before
     public void setup() {
         // initialise the thread local request context with requestUri and
         // baseUri
+        MockitoAnnotations.initMocks(this);
         RequestContext ctx = new RequestContext("http://localhost/myservice.svc", "/baseuri/", null);
         RequestContext.setRequestContext(ctx);
     }
@@ -118,7 +132,6 @@ public class TestHTTPHypermediaRIM {
     }
 
     /* We decode the query parameters to workaround an issue in Wink */
-    @SuppressWarnings({ "unchecked" })
     @Test
     public void testDecodeQueryParameters() throws InteractionException {
         ResourceState initialState = new ResourceState("entity", "state", mockActions(), "/test");
@@ -132,7 +145,7 @@ public class TestHTTPHypermediaRIM {
                 initialState), createMockMetadata());
 
         UriInfo uriInfo = mock(UriInfo.class);
-        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(mock(MultivaluedMap.class));
+        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(pathParams);
         MultivaluedMap<String, String> queryMap = new MultivaluedMapImpl<String>();
         queryMap.add("$filter", "this+that");
         when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(queryMap);
@@ -159,7 +172,6 @@ public class TestHTTPHypermediaRIM {
      * We decode the query parameters containing escaped '%' to workaround an
      * issue in Wink
      */
-    @SuppressWarnings({ "unchecked" })
     @Test
     public void testDecodeQueryParametersPercent() throws InteractionException {
         ResourceState initialState = new ResourceState("entity", "state", mockActions(), "/test");
@@ -173,7 +185,7 @@ public class TestHTTPHypermediaRIM {
                 initialState), createMockMetadata());
 
         UriInfo uriInfo = mock(UriInfo.class);
-        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(mock(MultivaluedMap.class));
+        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(pathParams);
         MultivaluedMap<String, String> queryMap = new MultivaluedMapImpl<String>();
         queryMap.add("$filter", "this%25that");
         when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(queryMap);
@@ -203,7 +215,6 @@ public class TestHTTPHypermediaRIM {
      * Because Wink itself decodes path parameters in the UriInfo we do NOT want
      * to decode a second time. Expect the 'encoded' value back.
      */
-    @SuppressWarnings({ "unchecked" })
     @Test
     public void testDecodePathParametersPercent() throws InteractionException {
         ResourceState initialState = new ResourceState("entity", "state", mockActions(), "/test");
@@ -217,7 +228,7 @@ public class TestHTTPHypermediaRIM {
                 initialState), createMockMetadata());
 
         UriInfo uriInfo = mock(UriInfo.class);
-        when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(mock(MultivaluedMap.class));
+        when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(queryParams);
 
         // Mock decoded path map.
         MultivaluedMap<String, String> decodedPathMap = new MultivaluedMapImpl<String>();
@@ -248,7 +259,6 @@ public class TestHTTPHypermediaRIM {
     }
 
     /* We decode the query parameters to workaround an issue in Wink */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
     public void testDecodeQueryParametersNullValue() {
         ResourceState initialState = new ResourceState("entity", "state", mockActions(), "/test");
@@ -258,8 +268,8 @@ public class TestHTTPHypermediaRIM {
                 createMockMetadata());
 
         UriInfo uriInfo = mock(UriInfo.class);
-        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(mock(MultivaluedMap.class));
-        MultivaluedMap<String, String> queryMap = new MultivaluedMapImpl();
+        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(pathParams);
+        MultivaluedMap<String, String> queryMap = new MultivaluedMapImpl<String>();
         queryMap.add(null, null);
         when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(queryMap);
 
@@ -427,7 +437,6 @@ public class TestHTTPHypermediaRIM {
      * an InteractionContext that has the new resource set; enabling the command
      * to getResource.
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void testPutCommandReceivesResource() throws InteractionException {
         ResourceState initialState = new ResourceState("entity", "state", mockActions(), "/test");
@@ -441,8 +450,8 @@ public class TestHTTPHypermediaRIM {
                 initialState), createMockMetadata());
 
         UriInfo uriInfo = mock(UriInfo.class);
-        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(mock(MultivaluedMap.class));
-        when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(mock(MultivaluedMap.class));
+        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(pathParams);
+        when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(queryParams);
 
         rim.put(mock(HttpHeaders.class), "id", uriInfo, new EntityResource<Object>("test resource"));
         verify(mockCommand).execute((InteractionContext) argThat(new CommandReceivesResourceArgumentMatcher()));
@@ -454,7 +463,6 @@ public class TestHTTPHypermediaRIM {
      * command to process the resource contained in the current part of the
      * multipart request
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void testMultipartPutCommandReceivesResource() throws InteractionException {
         ResourceState initialState = new ResourceState("entity", "state", mockActions(), "/test");
@@ -468,8 +476,8 @@ public class TestHTTPHypermediaRIM {
                 initialState), createMockMetadata());
 
         UriInfo uriInfo = mock(UriInfo.class);
-        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(mock(MultivaluedMap.class));
-        when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(mock(MultivaluedMap.class));
+        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(pathParams);
+        when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(queryParams);
 
         InMultiPart inMP = mock(InMultiPart.class);
         when(inMP.hasNext()).thenReturn(true, false);
@@ -485,7 +493,6 @@ public class TestHTTPHypermediaRIM {
      * enabling the command to process the resource contained in the current
      * part of the multipart request
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void testMultipartPostCommandReceivesResource() throws InteractionException {
         ResourceState initialState = new ResourceState("entity", "state", mockActions(), "/test");
@@ -499,8 +506,8 @@ public class TestHTTPHypermediaRIM {
                 initialState), createMockMetadata());
 
         UriInfo uriInfo = mock(UriInfo.class);
-        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(mock(MultivaluedMap.class));
-        when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(mock(MultivaluedMap.class));
+        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(pathParams);
+        when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(queryParams);
 
         InMultiPart inMP = mock(InMultiPart.class);
         when(inMP.hasNext()).thenReturn(true, false);
@@ -527,7 +534,6 @@ public class TestHTTPHypermediaRIM {
      * an InteractionContext that has the new resource set; enabling the command
      * to getResource.
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void testPOSTCommandReceivesResource() throws InteractionException {
         ResourceState initialState = new ResourceState("entity", "state", mockActions(), "/test");
@@ -541,8 +547,8 @@ public class TestHTTPHypermediaRIM {
                 initialState), createMockMetadata());
 
         UriInfo uriInfo = mock(UriInfo.class);
-        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(mock(MultivaluedMap.class));
-        when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(mock(MultivaluedMap.class));
+        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(pathParams);
+        when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(queryParams);
 
         rim.post(mock(HttpHeaders.class), "id", uriInfo, new EntityResource<Object>("test resource"));
         verify(mockCommand).execute((InteractionContext) argThat(new CommandReceivesResourceArgumentMatcher()));
@@ -662,7 +668,6 @@ public class TestHTTPHypermediaRIM {
         assertEquals(Status.PRECONDITION_FAILED.getStatusCode(), response.getStatus());
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testPutCommandWithIfMatchHeader() throws InteractionException {
         ResourceState initialState = new ResourceState("entity", "state", mockActions(), "/test");
@@ -688,8 +693,8 @@ public class TestHTTPHypermediaRIM {
                 initialState), createMockMetadata());
 
         UriInfo uriInfo = mock(UriInfo.class);
-        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(mock(MultivaluedMap.class));
-        when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(mock(MultivaluedMap.class));
+        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(pathParams);
+        when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(queryParams);
 
         // EntityResource without Etag
         EntityResource<Object> er = new EntityResource<Object>("test resource");
@@ -697,16 +702,11 @@ public class TestHTTPHypermediaRIM {
         // Apply If-Match header
         HttpHeaders httpHeaders = mock(HttpHeaders.class);
         doAnswer(new Answer<List<String>>() {
-            @SuppressWarnings("serial")
             @Override
             public List<String> answer(InvocationOnMock invocation) throws Throwable {
                 String headerName = (String) invocation.getArguments()[0];
                 if (headerName.equals(HttpHeaders.IF_MATCH)) {
-                    return new ArrayList<String>() {
-                        {
-                            add("ABCDEFG");
-                        }
-                    };
+                    return new ArrayList<String>(Arrays.asList(new String[]{"ABCDEFG"}));
                 }
                 return null;
             }
@@ -716,7 +716,6 @@ public class TestHTTPHypermediaRIM {
         rim.put(httpHeaders, "id", uriInfo, er);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testPutCommandWithEtag() throws InteractionException {
         ResourceState initialState = new ResourceState("entity", "state", mockActions(), "/test");
@@ -738,8 +737,8 @@ public class TestHTTPHypermediaRIM {
                 initialState), createMockMetadata());
 
         UriInfo uriInfo = mock(UriInfo.class);
-        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(mock(MultivaluedMap.class));
-        when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(mock(MultivaluedMap.class));
+        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(pathParams);
+        when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(queryParams);
 
         // EntityResource with Etag - etag is a response header and should not
         // be used on requests
@@ -750,16 +749,11 @@ public class TestHTTPHypermediaRIM {
         // Apply If-Match header
         HttpHeaders httpHeaders = mock(HttpHeaders.class);
         doAnswer(new Answer<List<String>>() {
-            @SuppressWarnings("serial")
             @Override
             public List<String> answer(InvocationOnMock invocation) throws Throwable {
                 String headerName = (String) invocation.getArguments()[0];
                 if (headerName.equals(HttpHeaders.IF_MATCH)) {
-                    return new ArrayList<String>() {
-                        {
-                            add("ABCDEFG");
-                        }
-                    };
+                    return new ArrayList<String>(Arrays.asList(new String[]{"ABCDEFG"}));
                 }
                 return null;
             }
@@ -769,7 +763,6 @@ public class TestHTTPHypermediaRIM {
         rim.put(httpHeaders, "id", uriInfo, er);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testDeleteCommandWithIfMatchHeader() throws InteractionException {
         ResourceState initialState = new ResourceState("entity", "state", mockActions(), "/test");
@@ -792,22 +785,17 @@ public class TestHTTPHypermediaRIM {
                 initialState), createMockMetadata());
 
         UriInfo uriInfo = mock(UriInfo.class);
-        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(mock(MultivaluedMap.class));
-        when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(mock(MultivaluedMap.class));
+        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(pathParams);
+        when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(queryParams);
 
         // Apply If-Match header
         HttpHeaders httpHeaders = mock(HttpHeaders.class);
         doAnswer(new Answer<List<String>>() {
-            @SuppressWarnings("serial")
             @Override
             public List<String> answer(InvocationOnMock invocation) throws Throwable {
                 String headerName = (String) invocation.getArguments()[0];
                 if (headerName.equals(HttpHeaders.IF_MATCH)) {
-                    return new ArrayList<String>() {
-                        {
-                            add("ABCDEFG");
-                        }
-                    };
+                    return new ArrayList<String>(Arrays.asList(new String[]{"ABCDEFG"}));
                 }
                 return null;
             }
@@ -816,12 +804,57 @@ public class TestHTTPHypermediaRIM {
         // execute
         rim.put(httpHeaders, "id", uriInfo, null); // resource is null
     }
+    
+    @Test
+    public void testResourceEmbedsResponseWhenCommandReturnsNonOKResponse(){
+        //given
+        ResourceState initialState = new ResourceState("entity", "state", mockActions(), "/test");
+        initialState.addTransition(new Transition.Builder().method("POST").target(initialState).build());
 
-    @SuppressWarnings({ "unchecked" })
+        InteractionCommand mockCommand = new InteractionCommand() {
+            public Result execute(InteractionContext ctx) {
+                assertNotNull(ctx.getResource());
+                assertNotNull(ctx.getPreconditionIfMatch());
+                assertNull(ctx.getResource().getEntityTag());
+                assertEquals("ABCDEFG", ctx.getPreconditionIfMatch());
+                return Result.INVALID_REQUEST;
+            }
+        };
+        Metadata metadata = createMockMetadata();
+        ResourceStateMachine rsm = spy(new ResourceStateMachine(initialState));
+        HTTPHypermediaRIM rim = new HTTPHypermediaRIM(mockCommandController(mockCommand), rsm, metadata);
+        
+        UriInfo uriInfo = mock(UriInfo.class);
+        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(pathParams);
+        when(uriInfo.getQueryParameters(anyBoolean())).thenReturn(queryParams);
+
+        // Apply If-Match header
+        HttpHeaders httpHeaders = mock(HttpHeaders.class);
+        doAnswer(new Answer<List<String>>() {
+            @Override
+            public List<String> answer(InvocationOnMock invocation) throws Throwable {
+                String headerName = (String) invocation.getArguments()[0];
+                if (headerName.equals(HttpHeaders.IF_MATCH)) {
+                    return new ArrayList<String>(Arrays.asList(new String[]{"ABCDEFG"}));
+                }
+                return null;
+            }
+        }).when(httpHeaders).getRequestHeader(any(String.class));
+        
+        //when
+        rim.post(httpHeaders, "id", uriInfo, entityResource);
+        
+        //then
+        verify(rsm).injectLinks(same(rim), any(InteractionContext.class), same(entityResource), 
+                (Transition)isNull(), same(httpHeaders), same(metadata));
+        verify(rsm).embedResources(same(rim), same(httpHeaders), 
+                any(InteractionContext.class), same(entityResource));
+    }
+
     private UriInfo mockEmptyUriInfo() {
         UriInfo uriInfo = mock(UriInfo.class);
-        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(mock(MultivaluedMap.class));
-        when(uriInfo.getQueryParameters(false)).thenReturn(mock(MultivaluedMap.class));
+        when(uriInfo.getPathParameters(anyBoolean())).thenReturn(pathParams);
+        when(uriInfo.getQueryParameters(false)).thenReturn(queryParams);
         return uriInfo;
     }
 
