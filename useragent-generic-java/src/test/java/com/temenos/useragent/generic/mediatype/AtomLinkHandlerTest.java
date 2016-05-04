@@ -22,24 +22,27 @@ package com.temenos.useragent.generic.mediatype;
  */
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Entry;
-import org.apache.abdera.model.Link;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.temenos.useragent.generic.internal.Payload;
-import com.temenos.useragent.generic.mediatype.AtomLinkHandler;
 
 public class AtomLinkHandlerTest {
+    
+    private static final String TEST_DATA = "/atom_entry_with_link_embedded.txt";
+    private static final String TEST_EMPTY_INLINE_LINK_DATA = "/atom_entry_with_embedded_empty_inline_link.txt";
 
 	private Entry testEntry;
 
 	@Before
 	public void setUp() {
-		testEntry = loadTestEntry();
+		testEntry = loadTestEntry(TEST_DATA);
 	}
 
 	@Test
@@ -114,13 +117,21 @@ public class AtomLinkHandlerTest {
 				testEntry.getLink("http://temenostech.temenos.com/rels/hold"))
 				.getEmbeddedPayload());
 	}
+    
+    @Test
+    public void testGetEmbeddedPayloadWithEmptyInlineElement(){
+        testEntry = loadTestEntry(TEST_EMPTY_INLINE_LINK_DATA);
+        assertNull(new AtomLinkHandler(
+            testEntry.getLink("http://temenostech.temenos.com/rels/errors")
+        ).getEmbeddedPayload());
+    }
 
-	private Entry loadTestEntry() {
+	private Entry loadTestEntry(String resource) {
 		Entry entry = new Abdera()
 				.getParser()
 				.<Entry> parse(
 						AtomLinkHandler.class
-								.getResourceAsStream("/atom_entry_with_link_embedded.txt"))
+								.getResourceAsStream(resource))
 				.getRoot();
 		return entry;
 	}

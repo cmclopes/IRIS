@@ -21,7 +21,8 @@ package com.temenos.useragent.generic.mediatype;
  * #L%
  */
 
-import static com.temenos.useragent.generic.mediatype.AtomUtil.*;
+import static com.temenos.useragent.generic.mediatype.AtomUtil.NS_ATOM;
+import static com.temenos.useragent.generic.mediatype.AtomUtil.NS_ODATA_METADATA;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -92,7 +93,7 @@ public class AtomLinkHandler {
 	private void buildEmbeddedPayload() {
 		Element inlineElement = abderaLink.getFirstChild(new QName(
 				NS_ODATA_METADATA, "inline"));
-		if (inlineElement == null) {
+		if (inlineElement == null || inlineElement.getFirstChild() == null) {
 			embeddedPayload = null; // TODO null payload
 			return;
 		}
