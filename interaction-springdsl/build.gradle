@@ -1,0 +1,5 @@
+dependencies {
+    compile project(':interaction-core')
+    compile "org.springframework:spring-context:${springVersion}"
+    compile "org.springframework:spring-beans:${springVersion}"
+}

@@ -1,0 +1,15 @@
+dependencies {
+    compile project(':interaction-core')
+    compile project(':interaction-commands-authorization')
+    
+    compile "org.springframework:spring-core:${springVersion}"
+    compile "org.springframework:spring-context:${springVersion}"
+    compile "org.springframework:spring-orm:${springVersion}"
+    compile "org.springframework:spring-beans:${springVersion}"
+    
+    compile 'com.h2database:h2:1.4.190'
+    compile 'com.sun.messaging.mq:fscontext:4.4.2'
+    compile 'org.jencks:jencks:2.2'
+    compile 'org.apache.geronimo.specs:geronimo-j2ee-connector_1.5_spec:2.0.0'
+    compile 'org.apache.geronimo.components:geronimo-transaction:2.1.2'
+}

@@ -1,34 +1,72 @@
-/useragent-examples/useragent-generic-javascript/src/main/webapp/lib
-/interaction-core/test-output
-/interaction-dsl/com.temenos.interaction.rimdsl.ui/plugin.xml_gen
-/interaction-dsl/com.temenos.interaction.rimdsl.ui/src/com/temenos/interaction/rimdsl/ui/RIMDslUiModule.java
-/interaction-dsl/com.temenos.interaction.rimdsl.ui/src/com/temenos/interaction/rimdsl/ui/contentassist/RIMDslProposalProvider.java
-/interaction-dsl/com.temenos.interaction.rimdsl.ui/src/com/temenos/interaction/rimdsl/ui/labeling/RIMDslDescriptionLabelProvider.java
-/interaction-dsl/com.temenos.interaction.rimdsl.ui/src/com/temenos/interaction/rimdsl/ui/labeling/RIMDslLabelProvider.java
-/interaction-dsl/com.temenos.interaction.rimdsl.ui/src/com/temenos/interaction/rimdsl/ui/outline/RIMDslOutlineTreeProvider.java
-/interaction-dsl/com.temenos.interaction.rimdsl.ui/src/com/temenos/interaction/rimdsl/ui/quickfix/RIMDslQuickfixProvider.java
-/interaction-dsl/com.temenos.interaction.rimdsl/.antlr-generator-3.2.0.jar
-/interaction-dsl/com.temenos.interaction.rimdsl/plugin.xml_gen
-/interaction-dsl/com.temenos.interaction.rimdsl/src/com/temenos/interaction/rimdsl/RIMDslStandaloneSetup.java
-/interaction-dsl/com.temenos.interaction.rimdsl/src/com/temenos/interaction/rimdsl/scoping/RIMDslScopeProvider.java
-*.iml
-*.log
-*.ipr
-*.iws
-/interaction-dsl/com.temenos.interaction.rimdsl.tests/test-output
-/interaction-examples/interaction-odata-airline/log.txt
-/interaction-examples/interaction-mashup-streaming/testimg.jpg
-.classpath
+
+# Created by https://www.gitignore.io/api/eclipse,gradle
+
+### Eclipse ###
+
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+# Eclipse Core
 .project
-.settings
-bin
-target
-report
-src-gen
-*~
-/interaction-core/nb-configuration.xml
-/nb-configuration.xml
-/interaction-examples/interaction-odata-airline/nbactions.xml
-/interaction-examples/interaction-odata-airline/nb-configuration.xml
-/nbactions.xml
-.metadata/
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# PyDev specific (Python IDE for Eclipse)
+*.pydevproject
+
+# CDT-specific (C/C++ Development Tooling)
+.cproject
+
+# JDT-specific (Eclipse Java Development Tools)
+.classpath
+
+# Java annotation processor (APT)
+.factorypath
+
+# PDT-specific (PHP Development Tools)
+.buildpath
+
+# sbteclipse plugin
+.target
+
+# Tern plugin
+.tern-project
+
+# TeXlipse plugin
+.texlipse
+
+# STS (Spring Tool Suite)
+.springBeans
+
+# Code Recommenders
+.recommenders/
+
+
+### Gradle ###
+.gradle
+build/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+# Cache of project
+.gradletasknamecache
+
+# # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
+# gradle/wrapper/gradle-wrapper.properties

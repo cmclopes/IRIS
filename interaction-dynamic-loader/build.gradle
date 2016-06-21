@@ -1,0 +1,11 @@
+dependencies {
+    compile project(':interaction-springdsl')
+    compile project(':interaction-odata4j-ext')
+    compile project(':interaction-core')
+    
+    compile "org.springframework:spring-context:${springVersion}"
+    compile "org.springframework:spring-beans:${springVersion}"
+    
+    compile 'org.reflections:reflections:0.9.10'
+    compile 'commons-codec:commons-codec:1.10'
+}

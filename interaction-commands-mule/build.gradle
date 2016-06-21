@@ -1,0 +1,16 @@
+def muleVersion = '3.6.1'
+
+dependencies {
+    compile project(':interaction-core')
+    
+    compile "org.springframework:spring-beans:${springVersion}"
+    
+    compile "org.mule.modules:mule-module-client:${muleVersion}"
+    compile "org.mule.modules:mule-module-json:${muleVersion}"
+    compile "org.mule.transports:mule-transport-vm:${muleVersion}"
+    compile "org.mule.transports:mule-transport-file:${muleVersion}"
+    compile "org.mule.transports:mule-transport-file:${muleVersion}"
+    
+    testCompile "org.mule.tests:mule-tests-functional:${muleVersion}"
+    testCompile 'net.javacrumbs.json-unit:json-unit-fluent:1.7.0'
+}

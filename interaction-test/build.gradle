@@ -1,0 +1,9 @@
+dependencies {
+    compile 'junit:junit:4.10'
+    compile "org.odata4j:odata4j-core:${odata4jVersion}"
+    compile "org.odata4j:odata4j-cxf:${odata4jVersion}"
+    compile "org.odata4j:odata4j-jersey:${odata4jVersion}"
+    compile 'com.sun.jersey:jersey-bundle:1.10'
+    compile 'com.sun.jersey.test.framework:jersey-test-framework:1.1.1-ea'
+    compile 'com.theoryinpractise:halbuilder-standard:4.0.1'
+}
