@@ -1,0 +1,5 @@
+dependencies {
+    compile project(':interaction-odata4j-ext')
+    compile "org.odata4j:odata4j-core:${odata4jVersion}"
+    compile "joda-time:joda-time:${jodaVersion}"
+}

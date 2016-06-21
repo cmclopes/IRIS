@@ -1,0 +1,8 @@
+dependencies {
+    compile 'org.reflections:reflections:0.9.10'
+    compile "org.springframework:spring-context:${springVersion}"
+    compile "org.apache.wink:wink-common:${winkVersion}"
+    compile "org.odata4j:odata4j-core:${odata4jVersion}"
+    compile "joda-time:joda-time:${jodaVersion}"
+    compile 'javax.servlet:javax.servlet-api:3.0.1'
+}

@@ -1,0 +1,5 @@
+dependencies {
+    compile "org.apache.wink:wink-common:${winkVersion}"
+    compile 'com.googlecode.cambridge:cambridge-core:1.0'
+    compile project(':interaction-core')
+}

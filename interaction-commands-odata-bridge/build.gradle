@@ -1,0 +1,6 @@
+dependencies {
+    compile project(':interaction-core')
+    compile "org.odata4j:odata4j-core:${odata4jVersion}"
+    compile "joda-time:joda-time:${jodaVersion}"
+    testCompile 'hsqldb:hsqldb:1.8.0.10'
+}

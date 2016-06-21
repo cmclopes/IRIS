@@ -1,0 +1,7 @@
+dependencies {
+    compile project(':interaction-core')
+    compile "org.apache.wink:wink-common:${winkVersion}"
+    compile 'com.theoryinpractise:halbuilder-standard:4.0.1'
+    compile "org.odata4j:odata4j-core:${odata4jVersion}"
+    compile 'ch.qos.logback:logback-classic:0.9.29'
+}
