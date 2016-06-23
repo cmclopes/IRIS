@@ -39,7 +39,7 @@ public class SpringBasedLoaderActionTest {
         FileEvent<File> dirEvent = new FileEvent<File>() {
             @Override
             public File getResource() {
-                return new File("src/test/jars/");
+                return new File(System.getProperty("jar.folder"));
             }
         };
 

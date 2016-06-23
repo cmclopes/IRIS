@@ -45,7 +45,7 @@ public class ReflectionsTest {
     
     @Test
     public void testLoadingClassesFromJar() throws MalformedURLException, ClassNotFoundException {
-        File jarFile = new File("src/test/jars/AnnotatedTestInteractionCommandClasses.jar");
+        File jarFile = new File(System.getProperty("jar.location"));
         Assert.assertTrue(jarFile.exists());
         ClassLoader classloader = new ParentLastURLClassloader(new URL[]{jarFile.toURI().toURL()}, Thread.currentThread().getContextClassLoader());
         Class<?> clz = classloader.loadClass("com.temenos.annotatedtestclasses.AnnotatedInteractionCmdStubImpl1");
@@ -57,7 +57,7 @@ public class ReflectionsTest {
         // enforce loading class with current classloader
         AnnotatedInteractionCmdStubImpl1 object = new AnnotatedInteractionCmdStubImpl1();
         
-        File jarFile = new File("src/test/jars/AnnotatedTestInteractionCommandClasses.jar");
+        File jarFile = new File(System.getProperty("jar.location"));
        
         ClassLoader classloader = new ParentLastURLClassloader(new URL[]{jarFile.toURI().toURL()}, Thread.currentThread().getContextClassLoader());
         Reflections r = new Reflections(                

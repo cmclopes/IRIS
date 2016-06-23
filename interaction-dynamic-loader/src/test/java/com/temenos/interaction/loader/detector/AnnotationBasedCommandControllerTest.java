@@ -41,7 +41,8 @@ public class AnnotationBasedCommandControllerTest {
     @Test
     public void testExistenceOfAnnotatedCommandInTheController() throws MalformedURLException {
 
-        File jarFile = new File("src/test/jars/AnnotatedTestInteractionCommandClasses.jar");
+        System.out.println("jar.location is "+System.getProperty("jar.location"));
+        File jarFile = new File(System.getProperty("jar.location"));
         ClassLoader classloader = new ParentLastURLClassloader(new URL[]{jarFile.toURI().toURL()}, Thread.currentThread().getContextClassLoader());
 
         AnnotationBasedCommandController controller = new AnnotationBasedCommandController();
@@ -53,8 +54,8 @@ public class AnnotationBasedCommandControllerTest {
 
     @Test
     public void testNumberOfCommandsDetectedByAnnotations() throws MalformedURLException {
-
-        File jarFile = new File("src/test/jars/AnnotatedTestInteractionCommandClasses.jar");
+        System.out.println("jar.location is "+System.getProperty("jar.location"));
+        File jarFile = new File(System.getProperty("jar.location"));
         ClassLoader classloader = new ParentLastURLClassloader(new URL[]{jarFile.toURI().toURL()}, Thread.currentThread().getContextClassLoader());
 
         CacheExposingAnnotationBasedCommandController controller = new CacheExposingAnnotationBasedCommandController();

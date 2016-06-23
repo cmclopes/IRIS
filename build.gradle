@@ -9,6 +9,12 @@ subprojects {
     ext.jodaVersion = '1.6'
     ext.powerMockVersion = '1.4.11'
     
+    repositories {
+        maven {
+            url = 'http://maven.oams.com/content/groups/all/'
+        }
+    }
+    
     apply plugin: 'java'
     
     dependencies {
