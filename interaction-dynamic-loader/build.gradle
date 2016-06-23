@@ -1,3 +1,44 @@
+sourceSets {
+    test {
+        java {
+            srcDir 'src/test/java'
+        }
+        resources {
+            srcDir 'src/test/resources'
+        }
+        //override default resources directory as Spring assumes a single directory
+        output.resourcesDir = "${project.buildDir}/classes/test"
+    }
+    annotatedTestClasses {
+        compileClasspath += configurations.testCompile
+        runtimeClasspath += configurations.testCompile
+        java {
+            srcDir 'src/test/java'
+            include 'com/temenos/annotatedtestclasses/**'
+        }
+    }
+    
+    newInteractionCommand {
+        compileClasspath += configurations.testCompile
+        runtimeClasspath += configurations.testCompile
+        java {
+            srcDir 'src/test/java'
+            include 'com/temenos/interaction/command/**'
+        }
+        resources {
+            srcDir 'src/test/resources'
+            include 'spring-test-contexts/hello-interaction-context.xml'
+        }
+    }
+}
+
+configurations {
+    newInteractionCommand
+    annotatedTestClasses
+    annotatedTestClasses.extendsFrom(compile)
+    newInteractionCommand.extendsFrom(compile)
+}
+
 dependencies {
     compile project(':interaction-springdsl')
     compile project(':interaction-odata4j-ext')
@@ -5,7 +46,35 @@ dependencies {
     
     compile "org.springframework:spring-context:${springVersion}"
     compile "org.springframework:spring-beans:${springVersion}"
-    
+    compile 'junit:junit:4.8.1'
     compile 'org.reflections:reflections:0.9.10'
     compile 'commons-codec:commons-codec:1.10'
+    compile 'commons-io:commons-io:2.4'
+}
+
+task compileAnnotatedTestClasses(type: Jar) {
+    from project.sourceSets.annotatedTestClasses.output
+    classifier = 'annotatedTestClasses'
+    destinationDir = file("${project.buildDir}/libs/test")
+}
+
+task compileNewInteractionCommand(type: Jar) {
+    from project.sourceSets.newInteractionCommand.output
+    classifier = 'newInteractionCommand'
+    destinationDir = file("${project.buildDir}/libs/test")
+}
+
+compileAnnotatedTestClasses.finalizedBy compileNewInteractionCommand
+assemble.finalizedBy compileAnnotatedTestClasses
+
+artifacts {
+    annotatedTestClasses jar
+    newInteractionCommand jar
+}
+
+test {
+    systemProperties = [
+        'jar.location': relativePath(compileAnnotatedTestClasses.archivePath.absolutePath),
+        'jar.folder': relativePath("${project.buildDir}/libs/test")
+    ]
 }
