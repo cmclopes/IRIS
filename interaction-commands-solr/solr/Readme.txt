@@ -1,2 +1,0 @@
-For jUnit testing there is a single simulated bank. Within the bank there are three cores called 'ShardEntity', 'Entity1' and 'Entity2'. These are based on Customer and
-Account but they are NOT 'Customer' or 'Account'. The field names are only for test and do not need to be in sync with real world entities.
